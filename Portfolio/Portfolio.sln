@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortfolioWeb", "PortfolioWeb\PortfolioWeb.csproj", "{3F20E1FD-34BD-4060-A302-68CFD278FE90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portfolio.Data", "Portfolio.Data\Portfolio.Data.csproj", "{65F16DFA-2D38-47D3-92D8-E344BF64684E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F20E1FD-34BD-4060-A302-68CFD278FE90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F20E1FD-34BD-4060-A302-68CFD278FE90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F20E1FD-34BD-4060-A302-68CFD278FE90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F20E1FD-34BD-4060-A302-68CFD278FE90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65F16DFA-2D38-47D3-92D8-E344BF64684E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65F16DFA-2D38-47D3-92D8-E344BF64684E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65F16DFA-2D38-47D3-92D8-E344BF64684E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65F16DFA-2D38-47D3-92D8-E344BF64684E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9D645343-2D8B-42DC-B51A-50DEB90B9AE6}
+	EndGlobalSection
+EndGlobal
