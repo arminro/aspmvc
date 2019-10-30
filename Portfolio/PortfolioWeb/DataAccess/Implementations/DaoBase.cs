@@ -60,11 +60,12 @@ namespace PortfolioWeb.DataAccess.Implementations
         public async Task UpdateAsync(T updatee)
         {
             T element = await EntryFinderAsync(updatee.Id);
+            
             if (element != null)
             {
-                _context.Entry(updatee).State = EntityState.Modified;
-
+                _context.Entry(element).State = EntityState.Detached;
                 _context.Update(updatee);
+                
                 await _context.SaveChangesAsync();
             }
             else

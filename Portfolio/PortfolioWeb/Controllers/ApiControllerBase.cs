@@ -78,14 +78,18 @@ namespace PortfolioWeb.Controllers
             }
         }
 
-        // PUT api/[entities]/5555-5555-5555
-        [HttpPut("{id}")]
-        public virtual async Task<ActionResult> Put(int id, [FromBody] TEntity value)
+        // PUT api/[entities]
+        [HttpPut/*("{id}")*/]
+        public virtual async Task<ActionResult> Put([FromBody] TEntity value)
         {
             try
             {
-                await _repository.UpdateAsync(value);
-                return Accepted(); 
+                if (ModelState.IsValid)
+                {
+                    await _repository.UpdateAsync(value);
+                    return Accepted();
+                }
+                return BadRequest();
             }
             catch (Exception)
             {
