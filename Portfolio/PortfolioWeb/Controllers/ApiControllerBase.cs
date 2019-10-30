@@ -26,6 +26,7 @@ namespace PortfolioWeb.Controllers
         {
             try
             {
+                // todo: access control will determine if inactive data can be returned (admin)
                 // an empty list is still ok
                 return Ok(await _repository.GetElementsAsync());
             }
@@ -66,6 +67,7 @@ namespace PortfolioWeb.Controllers
         {
             try
             {
+                value.Active = true;
                 await _repository.CreateAsync(value);
                 return Accepted(); // usually, Created() is used, but my repo does not return anything
             }
