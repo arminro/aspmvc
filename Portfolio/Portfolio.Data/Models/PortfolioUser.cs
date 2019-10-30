@@ -20,9 +20,6 @@ namespace Portfolio.Data.Models
         [MaxLength(200)]
         public string Description { get; set; }
 
-
-        public string CvPath { get; set; }
-        public string ImagePath { get; set; }
         
         [Required]
         public bool Active { get; set; } = true;
