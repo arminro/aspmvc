@@ -12,6 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Portfolio.Data;
+using Portfolio.Data.Models;
+using PortfolioWeb.DataAccess.Implementations;
+using PortfolioWeb.DataAccess.Interfaces;
 
 namespace PortfolioWeb
 {
@@ -30,8 +33,13 @@ namespace PortfolioWeb
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<PortfolioContext>(builder =>
             {
-                builder.UseSqlServer(Configuration["ConnectionStrings:Development"]);
+                builder.UseSqlServer(Configuration["ConnectionStrings"]);
             });
+
+            // DAOs with scoped lifetime to match lifetime of datacontext
+            services.AddScoped<IRepository<Job>, JobDao>();
+            services.AddScoped<IRepository<Skill>, SkillDao>();
+            services.AddScoped<IRepository<PortfolioUser>, UserDao>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
