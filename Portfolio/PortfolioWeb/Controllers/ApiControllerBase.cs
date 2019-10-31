@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Portfolio.Data.Interfaces;
 using Portfolio.Data.Models;
 using PortfolioWeb.DataAccess.Interfaces;
+using PortfolioWeb.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,27 +20,11 @@ namespace PortfolioWeb.Controllers
     {
         protected IRepository<TEntity> _repository;
         protected UserManager<PortfolioUser> _userManager;
+
         public ApiControllerBase(IRepository<TEntity> repository, UserManager<PortfolioUser> userManager)
         {
             _repository = repository;
             _userManager = userManager;
-        }
-
-        // GET api/[entities]/admin
-        [HttpGet]
-        [Authorize(Roles ="Administrator")]
-        public virtual async Task<ActionResult<IEnumerable<TEntity>>> Get()
-        {
-            try
-            {
-                // only the admin can see everything
-                return Ok(await _repository.GetElementsAsync(User.IsInRole("Adminstrator")));
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Could not retrieve list of ${nameof(TEntity)}");
-            }
         }
 
         // GET api/[entities]
@@ -51,8 +36,9 @@ namespace PortfolioWeb.Controllers
             {
                 if (!await LoggedInUserAuthorizedToPerformAction(ownerid))
                     return Unauthorized();
-                
-                return Ok((await _repository.GetElementsAsync(User.IsInRole("Adminstrator")))?.Where(e=>e.UserId == ownerid));
+
+                var result = await _repository.GetElementsAsync(User.IsInRole(Constants.ADMIN_ROLE));
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -69,7 +55,7 @@ namespace PortfolioWeb.Controllers
         {
             try
             {
-                var entity = await _repository.GetElementAsync(elementId, User.IsInRole("Adminstrator"));
+                var entity = await _repository.GetElementAsync(elementId, User.IsInRole(Constants.ADMIN_ROLE));
                 if (entity == null)
                 {
                     return NotFound();
@@ -91,17 +77,19 @@ namespace PortfolioWeb.Controllers
         }
 
         // POST api/[entities]
-        [HttpPost]
+        [HttpPost("{ownerId}")]
         [Authorize]
-        public virtual async Task<ActionResult> Post([FromBody] TEntity value)
+        public virtual async Task<ActionResult> Post(Guid ownerId, [FromBody] TEntity value)
         {
             try
             {
-
-                value.Active = true;
-                value.UserId = await GetLoggedInUserId();
-                await _repository.CreateAsync(value);
-                return Accepted(); // usually, Created() is used, but my repo does not return anything
+                if (await LoggedInUserAuthorizedToPerformAction(ownerId) && value.UserId == ownerId)
+                {
+                    value.Active = true;
+                    await _repository.CreateAsync(value);
+                    return Accepted(); // usually, Created() is used, but my repo does not return anything
+                }
+                return Unauthorized();
             }
             catch (Exception)
             {
@@ -141,9 +129,10 @@ namespace PortfolioWeb.Controllers
         [Authorize]
         public virtual async Task<ActionResult> Delete(Guid id, [FromBody] Guid ownerId)
         {
+            TEntity entity = null;
             try
             {
-                var entity = await _repository.GetElementAsync(id, User.IsInRole("Adminstrator"));
+                entity = await _repository.GetElementAsync(id, User.IsInRole(Constants.ADMIN_ROLE));
                 if (entity == null)
                 {
                     return NotFound();
@@ -152,7 +141,7 @@ namespace PortfolioWeb.Controllers
                 {
                     if(await LoggedInUserAuthorizedToPerformAction(ownerId) && entity.UserId == ownerId)
                     {
-                        await _repository.DeleteAsync(entity, User.IsInRole("Administrator"));
+                        await _repository.DeleteAsync(entity, User.IsInRole(Constants.ADMIN_ROLE));
                         return Ok(entity);
                     }
                     return Unauthorized();
@@ -162,14 +151,14 @@ namespace PortfolioWeb.Controllers
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Could not delete element ${nameof(TEntity)}");
+                    $"Could not delete element ${entity?.GetType().Name}");
             }
         }
 
         protected async Task<bool> LoggedInUserAuthorizedToPerformAction(Guid userId)
         {
             // authorized if admin or loggedin
-            return User.IsInRole("Administrator") ||
+            return User.IsInRole(Constants.ADMIN_ROLE) ||
                 (await _userManager.GetUserAsync(HttpContext.User)).Id == userId;
         }
 

@@ -49,7 +49,7 @@ namespace PortfolioWeb.Controllers
                     return Unauthorized(result);
                 }
                 await _signInManager.PasswordSignInAsync(user, viewModel.Password, false, false);
-                return Ok();
+                return Ok(user.Id);
             }
             catch
             {
@@ -75,7 +75,7 @@ namespace PortfolioWeb.Controllers
                     var signInResult = await _signInManager.PasswordSignInAsync(viewModel.Username, viewModel.Password, false, false);
                     if (signInResult.Succeeded)
                     {
-                        return Ok();
+                        return Ok(userInDb.Id);
                     }
                     return Unauthorized();
                 }

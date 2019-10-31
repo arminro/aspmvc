@@ -34,9 +34,6 @@ namespace Portfolio.Data.Models
         public bool Active { get; set; } = true;
 
         [Required]
-        public PortfolioUser User { get; set; }
-
-        [Required]
         public Guid UserId { get; set; }
     }
 
