@@ -13,10 +13,10 @@ namespace PortfolioWeb.DataAccess.Interfaces
 
         Task UpdateAsync(T updatee);
 
-        Task<T> GetElementAsync(Guid id);
+        Task<T> GetElementAsync(Guid id, bool isAdmin);
 
-        Task<IEnumerable<T>> GetElementsAsync();
+        Task<IEnumerable<T>> GetElementsAsync(bool isAdmin);
 
-        Task DeleteAsync(T deletee);
+        Task DeleteAsync(T deletee, bool isAdmin);
     }
 }

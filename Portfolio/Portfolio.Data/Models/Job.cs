@@ -32,9 +32,15 @@ namespace Portfolio.Data.Models
 
         [Required]
         public bool Active { get; set; } = true;
+
+        [Required]
+        public PortfolioUser User { get; set; }
+
+        [Required]
+        public Guid UserId { get; set; }
     }
 
-    public partial class Job : IDbEntry, ILogicallyDeletable
+    public partial class Job : IDbEntry, ILogicallyDeletable, IEntityChild
     {
     }
 }

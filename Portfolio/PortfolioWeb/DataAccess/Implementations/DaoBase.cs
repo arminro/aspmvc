@@ -30,14 +30,20 @@ namespace PortfolioWeb.DataAccess.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(T deletee)
+        public async Task DeleteAsync(T deletee, bool isAdmin)
         {
             T element = await EntryFinderAsync(deletee.Id);
             if (element != null)
             {
-                // _context.Remove(deletee);
-                _context.Entry(element).State = EntityState.Modified;
-                element.Active = false;
+                if (isAdmin)
+                {
+                    _context.Remove(deletee);
+                }
+                else
+                {
+                    _context.Entry(element).State = EntityState.Modified;
+                    element.Active = false;
+                }
 
                 await _context.SaveChangesAsync();
             }
@@ -47,14 +53,27 @@ namespace PortfolioWeb.DataAccess.Implementations
             }
         }
 
-        public async Task<T> GetElementAsync(Guid id)
+        public async Task<T> GetElementAsync(Guid id, bool isAdmin)
         {
-            return await _context.Set<T>().FindAsync(id);
+            if (isAdmin)
+            {
+                // admin can query inactive elements as well
+                return await _context.Set<T>().FindAsync(id);
+            }
+            var element = await _context.Set<T>().FindAsync(id);
+
+            return element.Active ? element : null; 
+
         }
 
-        public async Task<IEnumerable<T>> GetElementsAsync()
+        public async Task<IEnumerable<T>> GetElementsAsync(bool isAdmin)
         {
-            return await _context.Set<T>().ToListAsync();
+            if (isAdmin)
+            {
+                // admin can query inactive elements as well
+                return await _context.Set<T>().ToListAsync();
+            }
+            return await _context.Set<T>().Where(e=>e.Active).ToListAsync();
         }
 
         public async Task UpdateAsync(T updatee)

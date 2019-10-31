@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Portfolio.Data.Models;
 using PortfolioWeb.DataAccess.Interfaces;
 using System;
@@ -12,8 +13,8 @@ namespace PortfolioWeb.Controllers
     [ApiController]
     public class SkillsController : ApiControllerBase<Skill>
     {
-        public SkillsController(IRepository<Skill> repository)
-            : base(repository)
+        public SkillsController(IRepository<Skill> repository, UserManager<PortfolioUser> userManager)
+            : base(repository, userManager)
         {
         }
     }

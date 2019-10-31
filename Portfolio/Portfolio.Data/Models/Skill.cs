@@ -23,9 +23,15 @@ namespace Portfolio.Data.Models
 
         [Required]
         public bool Active { get; set; } = true;
+
+        [Required]
+        public PortfolioUser User { get; set; }
+
+        [Required]
+        public Guid UserId { get; set; }
     }
 
-    public partial class Skill : IDbEntry, ILogicallyDeletable
+    public partial class Skill : IDbEntry, ILogicallyDeletable, IEntityChild
     {
     }
 }

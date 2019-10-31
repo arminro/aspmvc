@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Portfolio.Data.Interfaces;
+using Portfolio.Data.Models;
 using PortfolioWeb.DataAccess.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -12,46 +15,72 @@ namespace PortfolioWeb.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class ApiControllerBase<TEntity> : ControllerBase
-        where TEntity : class, IDbEntry, ILogicallyDeletable
+        where TEntity : class, IDbEntry, ILogicallyDeletable, IEntityChild
     {
         protected IRepository<TEntity> _repository;
-        public ApiControllerBase(IRepository<TEntity> repository)
+        protected UserManager<PortfolioUser> _userManager;
+        public ApiControllerBase(IRepository<TEntity> repository, UserManager<PortfolioUser> userManager)
         {
             _repository = repository;
+            _userManager = userManager;
         }
 
-        // GET api/[entities]
+        // GET api/[entities]/admin
         [HttpGet]
+        [Authorize(Roles ="Administrator")]
         public virtual async Task<ActionResult<IEnumerable<TEntity>>> Get()
         {
             try
             {
-                // todo: access control will determine if inactive data can be returned (admin)
-                // an empty list is still ok
-                return Ok(await _repository.GetElementsAsync());
+                // only the admin can see everything
+                return Ok(await _repository.GetElementsAsync(User.IsInRole("Adminstrator")));
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     $"Could not retrieve list of ${nameof(TEntity)}");
             }
-
         }
 
-        // GET api/[entities]/5555-5555-5555-5555
-        [HttpGet("{id}")]
-        public virtual async Task<ActionResult<TEntity>> Get(Guid id)
+        // GET api/[entities]
+        [HttpGet]
+        [Authorize]
+        public virtual async Task<ActionResult<IEnumerable<TEntity>>> Get([FromBody] Guid ownerid)
         {
             try
             {
-                var entity = await _repository.GetElementAsync(id);
+                if (!await LoggedInUserAuthorizedToPerformAction(ownerid))
+                    return Unauthorized();
+                
+                return Ok((await _repository.GetElementsAsync(User.IsInRole("Adminstrator")))?.Where(e=>e.UserId == ownerid));
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    $"Could not retrieve list of ${nameof(TEntity)}");
+            }
+        }
+
+
+        // GET api/[entities]/5555-5555-5555-5555
+        [HttpGet("{id}")]
+        [Authorize]
+        public virtual async Task<ActionResult<TEntity>> Get(Guid elementId, [FromBody] Guid ownerId)
+        {
+            try
+            {
+                var entity = await _repository.GetElementAsync(elementId, User.IsInRole("Adminstrator"));
                 if (entity == null)
                 {
                     return NotFound();
                 }
                 else
                 {
-                    return Ok(entity);
+                    // admin can ask for resource belonging to anyone
+                    if (await LoggedInUserAuthorizedToPerformAction(ownerId) && entity.UserId == ownerId)
+                        return Ok(entity);
+
+                    return Unauthorized();
                 }
             }
             catch (Exception)
@@ -63,31 +92,40 @@ namespace PortfolioWeb.Controllers
 
         // POST api/[entities]
         [HttpPost]
+        [Authorize]
         public virtual async Task<ActionResult> Post([FromBody] TEntity value)
         {
             try
             {
+
                 value.Active = true;
+                value.UserId = await GetLoggedInUserId();
                 await _repository.CreateAsync(value);
                 return Accepted(); // usually, Created() is used, but my repo does not return anything
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Could not create element ${nameof(TEntity)}");
+                    $"Could not create element ${value.GetType().Name}");
             }
         }
 
         // PUT api/[entities]
-        [HttpPut/*("{id}")*/]
-        public virtual async Task<ActionResult> Put([FromBody] TEntity value)
+        [HttpPut("{id}")]
+        [Authorize]
+        public virtual async Task<ActionResult> Put(Guid ownerId, [FromBody] TEntity value)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _repository.UpdateAsync(value);
-                    return Accepted();
+                    if (await LoggedInUserAuthorizedToPerformAction(ownerId) && value.UserId == ownerId)
+                    {
+                        await _repository.UpdateAsync(value);
+                        return Accepted();
+                    }
+                    return Unauthorized();
+                    
                 }
                 return BadRequest();
             }
@@ -100,19 +138,25 @@ namespace PortfolioWeb.Controllers
 
         // DELETE api/[entities]/5555-5555-5555
         [HttpDelete("{id}")]
-        public virtual async Task<ActionResult> Delete(Guid id)
+        [Authorize]
+        public virtual async Task<ActionResult> Delete(Guid id, [FromBody] Guid ownerId)
         {
             try
             {
-                var entity = await _repository.GetElementAsync(id);
+                var entity = await _repository.GetElementAsync(id, User.IsInRole("Adminstrator"));
                 if (entity == null)
                 {
                     return NotFound();
                 }
                 else
                 {
-                    await _repository.DeleteAsync(entity);
-                    return Ok(entity);
+                    if(await LoggedInUserAuthorizedToPerformAction(ownerId) && entity.UserId == ownerId)
+                    {
+                        await _repository.DeleteAsync(entity, User.IsInRole("Administrator"));
+                        return Ok(entity);
+                    }
+                    return Unauthorized();
+                    
                 }
             }
             catch (Exception)
@@ -121,5 +165,18 @@ namespace PortfolioWeb.Controllers
                     $"Could not delete element ${nameof(TEntity)}");
             }
         }
+
+        protected async Task<bool> LoggedInUserAuthorizedToPerformAction(Guid userId)
+        {
+            // authorized if admin or loggedin
+            return User.IsInRole("Administrator") ||
+                (await _userManager.GetUserAsync(HttpContext.User)).Id == userId;
+        }
+
+        protected async Task<Guid> GetLoggedInUserId()
+        {
+            return (await _userManager.GetUserAsync(HttpContext.User)).Id;
+        }
+
     }
 }

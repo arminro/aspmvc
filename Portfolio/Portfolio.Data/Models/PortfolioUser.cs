@@ -1,4 +1,5 @@
-﻿using Portfolio.Data.Interfaces;
+﻿using Microsoft.AspNetCore.Identity;
+using Portfolio.Data.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,11 +8,11 @@ using System.Text;
 
 namespace Portfolio.Data.Models
 {
-    public partial class PortfolioUser
+    public partial class PortfolioUser : IdentityUser<Guid>
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; set; }
+        public override Guid Id { get; set; }
 
         [MaxLength(50)]
         [Required]
@@ -20,7 +21,6 @@ namespace Portfolio.Data.Models
         [MaxLength(200)]
         public string Description { get; set; }
 
-        
         [Required]
         public bool Active { get; set; } = true;
 

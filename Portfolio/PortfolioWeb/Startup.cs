@@ -15,6 +15,7 @@ using Portfolio.Data;
 using Portfolio.Data.Models;
 using PortfolioWeb.DataAccess.Implementations;
 using PortfolioWeb.DataAccess.Interfaces;
+using PortfolioWeb.Helpers;
 
 namespace PortfolioWeb
 {
@@ -31,6 +32,11 @@ namespace PortfolioWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            
+            services.AddIdentity<PortfolioUser, PortfolioRole>()
+                .AddEntityFrameworkStores<PortfolioContext>()
+                .AddRoles<PortfolioRole>();
+
             services.AddDbContext<PortfolioContext>(builder =>
             {
                 builder.UseSqlServer(Configuration["ConnectionStrings"]);
@@ -40,14 +46,18 @@ namespace PortfolioWeb
             services.AddScoped<IRepository<Job>, JobDao>();
             services.AddScoped<IRepository<Skill>, SkillDao>();
             services.AddScoped<IRepository<PortfolioUser>, UserDao>();
+
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+               
+              
             }
             else
             {
@@ -56,7 +66,9 @@ namespace PortfolioWeb
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
+            RolesHelper.CreateRoles(serviceProvider);
         }
     }
 }
