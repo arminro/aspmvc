@@ -15,6 +15,7 @@ namespace PortfolioWeb.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ApiControllerBase<TEntity> : ControllerBase
         where TEntity : class, IDbEntry, ILogicallyDeletable, IEntityChild
     {
@@ -29,14 +30,10 @@ namespace PortfolioWeb.Controllers
 
         // GET api/[entities]
         [HttpGet]
-        [Authorize]
-        public virtual async Task<ActionResult<IEnumerable<TEntity>>> Get([FromBody] Guid ownerid)
+        public virtual async Task<ActionResult<IEnumerable<TEntity>>> Get()
         {
             try
             {
-                if (!await LoggedInUserAuthorizedToPerformAction(ownerid))
-                    return Unauthorized();
-
                 var result = await _repository.GetElementsAsync(User.IsInRole(Constants.ADMIN_ROLE));
                 return Ok(result);
             }
@@ -50,8 +47,7 @@ namespace PortfolioWeb.Controllers
 
         // GET api/[entities]/5555-5555-5555-5555
         [HttpGet("{id}")]
-        [Authorize]
-        public virtual async Task<ActionResult<TEntity>> Get(Guid elementId, [FromBody] Guid ownerId)
+        public virtual async Task<ActionResult<TEntity>> Get(Guid elementId)
         {
             try
             {
@@ -62,28 +58,23 @@ namespace PortfolioWeb.Controllers
                 }
                 else
                 {
-                    // admin can ask for resource belonging to anyone
-                    if (await LoggedInUserAuthorizedToPerformAction(ownerId) && entity.UserId == ownerId)
-                        return Ok(entity);
-
-                    return Unauthorized();
+                    return Ok(entity);
                 }
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Could not retrieve element ${nameof(TEntity)}");
+                    $"Could not retrieve the element");
             }
         }
 
         // POST api/[entities]
-        [HttpPost("{ownerId}")]
-        [Authorize]
-        public virtual async Task<ActionResult> Post(Guid ownerId, [FromBody] TEntity value)
+        [HttpPost]
+        public virtual async Task<ActionResult> Post([FromBody] TEntity value)
         {
             try
             {
-                if (await LoggedInUserAuthorizedToPerformAction(ownerId) && value.UserId == ownerId)
+                if (await LoggedInUserAuthorizedToPerformAction(value.UserId))
                 {
                     value.Active = true;
                     await _repository.CreateAsync(value);
@@ -99,15 +90,14 @@ namespace PortfolioWeb.Controllers
         }
 
         // PUT api/[entities]
-        [HttpPut("{id}")]
-        [Authorize]
-        public virtual async Task<ActionResult> Put(Guid ownerId, [FromBody] TEntity value)
+        [HttpPut]
+        public virtual async Task<ActionResult> Put([FromBody] TEntity value)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    if (await LoggedInUserAuthorizedToPerformAction(ownerId) && value.UserId == ownerId)
+                    if (await LoggedInUserAuthorizedToPerformAction(value.UserId))
                     {
                         await _repository.UpdateAsync(value);
                         return Accepted();
@@ -120,52 +110,44 @@ namespace PortfolioWeb.Controllers
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Could not update element ${nameof(TEntity)}");
+                    $"Could not update element ${value.GetType().Name}");
             }
         }
 
-        // DELETE api/[entities]/5555-5555-5555
-        [HttpDelete("{id}")]
-        [Authorize]
-        public virtual async Task<ActionResult> Delete(Guid id, [FromBody] Guid ownerId)
+        // DELETE api/[entities]
+        [HttpDelete]
+        public virtual async Task<ActionResult> Delete([FromHeader] TEntity value)
         {
-            TEntity entity = null;
             try
             {
-                entity = await _repository.GetElementAsync(id, User.IsInRole(Constants.ADMIN_ROLE));
+                var entity = await _repository.GetElementAsync(value.Id, User.IsInRole(Constants.ADMIN_ROLE));
                 if (entity == null)
                 {
                     return NotFound();
                 }
                 else
                 {
-                    if(await LoggedInUserAuthorizedToPerformAction(ownerId) && entity.UserId == ownerId)
+                    if(await LoggedInUserAuthorizedToPerformAction(value.UserId))
                     {
                         await _repository.DeleteAsync(entity, User.IsInRole(Constants.ADMIN_ROLE));
                         return Ok(entity);
                     }
-                    return Unauthorized();
-                    
+                    return Unauthorized();                    
                 }
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Could not delete element ${entity?.GetType().Name}");
+                    $"Could not delete element ${value?.GetType().Name}");
             }
         }
 
         protected async Task<bool> LoggedInUserAuthorizedToPerformAction(Guid userId)
         {
-            // authorized if admin or loggedin
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            // authorized is admin or loggedin
             return User.IsInRole(Constants.ADMIN_ROLE) ||
-                (await _userManager.GetUserAsync(HttpContext.User)).Id == userId;
+                user.Id == userId;
         }
-
-        protected async Task<Guid> GetLoggedInUserId()
-        {
-            return (await _userManager.GetUserAsync(HttpContext.User)).Id;
-        }
-
     }
 }

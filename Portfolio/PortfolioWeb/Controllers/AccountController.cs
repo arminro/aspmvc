@@ -6,28 +6,37 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Portfolio.Data.Models;
+using PortfolioWeb.Helpers;
+using PortfolioWeb.Security;
 using PortfolioWeb.ViewModels;
 
 namespace PortfolioWeb.Controllers
 {
     //[Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AccountController : ControllerBase
     {
-        private UserManager<PortfolioUser> _userManager;
-        private SignInManager<PortfolioUser> _signInManager;
-        private RoleManager<PortfolioRole> _roleManager;
+        private readonly UserManager<PortfolioUser> _userManager;
+        private readonly SignInManager<PortfolioUser> _signInManager;
+        private readonly RoleManager<PortfolioRole> _roleManager;
+        private readonly AppSettings _appsettings;
+        ITokenService _tokenService;
 
-        public AccountController(UserManager<PortfolioUser> userManager, SignInManager<PortfolioUser> signInManager)
+        public AccountController(UserManager<PortfolioUser> userManager,
+            SignInManager<PortfolioUser> signInManager, ITokenService tokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _tokenService = tokenService;
         }
 
 
         [HttpPost]
         [Route("api/[controller]/register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel viewModel)
         {
             try
@@ -49,7 +58,7 @@ namespace PortfolioWeb.Controllers
                     return Unauthorized(result);
                 }
                 await _signInManager.PasswordSignInAsync(user, viewModel.Password, false, false);
-                return Ok(user.Id);
+                return Ok(_tokenService.GenerateToken(user.Id));
             }
             catch
             {
@@ -75,7 +84,7 @@ namespace PortfolioWeb.Controllers
                     var signInResult = await _signInManager.PasswordSignInAsync(viewModel.Username, viewModel.Password, false, false);
                     if (signInResult.Succeeded)
                     {
-                        return Ok(userInDb.Id);
+                        return Ok(_tokenService.GenerateToken(userInDb.Id));
                     }
                     return Unauthorized();
                 }
