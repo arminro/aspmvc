@@ -10,7 +10,7 @@ namespace PortfolioWeb.DataAccess.Implementations
 {
     public abstract class DaoBase<TDbCtx, T> : IRepository<T>, IDisposable
         where TDbCtx : DbContext
-        where T : class, IDbEntry, ILogicallyDeletable
+        where T : class, IDbEntry, ILogicallyDeletable, IEntityChild
     {
         private TDbCtx _context;
 
@@ -60,12 +60,10 @@ namespace PortfolioWeb.DataAccess.Implementations
                 // admin can query inactive elements as well
                 return await _context.Set<T>().FindAsync(id);
             }
-            var element = await _context.Set<T>().FindAsync(id);
-
-            return element.Active ? element : null; 
+            return await _context.Set<T>().FirstOrDefaultAsync(e => e.Id == id && e.Active == true);
         }
 
-        public async Task<IEnumerable<T>> GetElementsAsync(bool isAdmin)
+        public async Task<IEnumerable<T>> GetElementsAsync(bool isAdmin, Guid ownerId)
         {
             if (isAdmin)
             {
@@ -73,7 +71,7 @@ namespace PortfolioWeb.DataAccess.Implementations
                 var result = await _context.Set<T>().ToListAsync();
                 return result;
             }
-            return await _context.Set<T>().Where(e=>e.Active).ToListAsync();
+            return await _context.Set<T>().Where(e=>e.Active && e.UserId == ownerId).ToListAsync();
         }
 
         public async Task UpdateAsync(T updatee)

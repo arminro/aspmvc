@@ -18,6 +18,7 @@ namespace PortfolioWeb.Helpers
             var UserManager = serviceProvider.GetRequiredService<UserManager<PortfolioUser>>();
             
             string adminRole = "Administrator";
+            
 
             var roleExist =  RoleManager.RoleExistsAsync(adminRole);
             roleExist.Wait();
@@ -26,9 +27,16 @@ namespace PortfolioWeb.Helpers
                 RoleManager.CreateAsync(new PortfolioRole() { Name = adminRole }).Wait();
             }
 
+            string userRole = "User";
+
+            roleExist = RoleManager.RoleExistsAsync(userRole);
+            roleExist.Wait();
+            if (!roleExist.Result)
+            {
+                RoleManager.CreateAsync(new PortfolioRole() { Name = userRole }).Wait();
+            }
             // creating a super admin user
             var superuser = new PortfolioUser
-
             {
                 UserName = "admin",
                 Name = "Admin Endre",

@@ -26,6 +26,7 @@ namespace Portfolio.Data.Models
 
         ICollection<Job> Jobs { get; set; }
         ICollection<Skill> Skills { get; set; }
+
     }
 
     public partial class PortfolioUser : IDbEntry, ILogicallyDeletable

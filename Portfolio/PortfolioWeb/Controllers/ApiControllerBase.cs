@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,13 +20,16 @@ namespace PortfolioWeb.Controllers
     public class ApiControllerBase<TEntity> : ControllerBase
         where TEntity : class, IDbEntry, ILogicallyDeletable, IEntityChild
     {
-        protected IRepository<TEntity> _repository;
-        protected UserManager<PortfolioUser> _userManager;
+        protected readonly IRepository<TEntity> _repository;
+        protected readonly UserManager<PortfolioUser> _userManager;
+        protected readonly RoleManager<PortfolioRole> _roleManager;
 
-        public ApiControllerBase(IRepository<TEntity> repository, UserManager<PortfolioUser> userManager)
+        public ApiControllerBase(IRepository<TEntity> repository,
+            UserManager<PortfolioUser> userManager, RoleManager<PortfolioRole> roleManager)
         {
             _repository = repository;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         // GET api/[entities]
@@ -34,7 +38,8 @@ namespace PortfolioWeb.Controllers
         {
             try
             {
-                var result = await _repository.GetElementsAsync(User.IsInRole(Constants.ADMIN_ROLE));
+                var result = await _repository.GetElementsAsync(await IsUserAdmin(),
+                    GetUserIdFromJWT());
                 return Ok(result);
             }
             catch (Exception)
@@ -51,7 +56,7 @@ namespace PortfolioWeb.Controllers
         {
             try
             {
-                var entity = await _repository.GetElementAsync(elementId, User.IsInRole(Constants.ADMIN_ROLE));
+                var entity = await _repository.GetElementAsync(elementId, await IsUserAdmin());
                 if (entity == null)
                 {
                     return NotFound();
@@ -120,7 +125,7 @@ namespace PortfolioWeb.Controllers
         {
             try
             {
-                var entity = await _repository.GetElementAsync(value.Id, User.IsInRole(Constants.ADMIN_ROLE));
+                var entity = await _repository.GetElementAsync(value.Id, await IsUserAdmin());
                 if (entity == null)
                 {
                     return NotFound();
@@ -129,7 +134,7 @@ namespace PortfolioWeb.Controllers
                 {
                     if(await LoggedInUserAuthorizedToPerformAction(value.UserId))
                     {
-                        await _repository.DeleteAsync(entity, User.IsInRole(Constants.ADMIN_ROLE));
+                        await _repository.DeleteAsync(entity, await IsUserAdmin());
                         return Ok(entity);
                     }
                     return Unauthorized();                    
@@ -142,12 +147,26 @@ namespace PortfolioWeb.Controllers
             }
         }
 
-        protected async Task<bool> LoggedInUserAuthorizedToPerformAction(Guid userId)
+        protected async Task<bool> LoggedInUserAuthorizedToPerformAction(Guid authorOfResource)
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
-            // authorized is admin or loggedin
-            return User.IsInRole(Constants.ADMIN_ROLE) ||
-                user.Id == userId;
+            // no null check is needed, since [Authorize] would not let the flow here w/o a valid JWT
+            // JWT has a pre-agreed schema which includes the user id, so this should always work by design (unless MS renames aud)
+            Guid id = GetUserIdFromJWT();
+
+            // authorized is admin or loggedin and owns the resource
+            return await IsUserAdmin() || id == authorOfResource;
+        }
+
+        private Guid GetUserIdFromJWT()
+        {
+            return Guid.Parse(User.Claims.FirstOrDefault(e => e.Type == "aud").Value);
+        }
+
+        private async Task<bool> IsUserAdmin()
+        {
+            var roleId = Guid.Parse(User.Claims.FirstOrDefault(e => e.Type == "role").Value);
+            var adminId = (await _roleManager.FindByNameAsync(Constants.ADMIN_ROLE))?.Id;
+            return roleId == adminId;
         }
     }
 }

@@ -14,8 +14,8 @@ namespace PortfolioWeb.Controllers
     [ApiController]
     public class JobsController : ApiControllerBase<Job>
     {
-        public JobsController(IRepository<Job> repository, UserManager<PortfolioUser> userManager)
-            :base(repository, userManager)
+        public JobsController(IRepository<Job> repository, UserManager<PortfolioUser> userManager, RoleManager<PortfolioRole> roleManager)
+            :base(repository, userManager, roleManager)
         {
         }
     }

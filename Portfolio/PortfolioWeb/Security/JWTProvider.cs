@@ -16,7 +16,7 @@ namespace PortfolioWeb.Security
         {
             _appSettings = appSettings;
         }
-        public string GenerateToken(Guid userId)
+        public string GenerateToken(Guid userId, string roleId)
         {
             // based on: https://jasonwatmore.com/post/2018/08/14/aspnet-core-21-jwt-authentication-tutorial-with-example-api
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -25,12 +25,15 @@ namespace PortfolioWeb.Security
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, userId.ToString())
+                    new Claim(ClaimTypes.Name, userId.ToString()),
+                    new Claim(ClaimTypes.Role, roleId)
                 }),
                 Expires = DateTime.UtcNow.AddHours(8),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
                 IssuedAt = DateTime.UtcNow,
+                
                 Audience = userId.ToString() // indicate that the audience will be the user and only the user
+                
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);

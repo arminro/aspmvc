@@ -13,8 +13,8 @@ namespace PortfolioWeb.Controllers
     [ApiController]
     public class SkillsController : ApiControllerBase<Skill>
     {
-        public SkillsController(IRepository<Skill> repository, UserManager<PortfolioUser> userManager)
-            : base(repository, userManager)
+        public SkillsController(IRepository<Skill> repository, UserManager<PortfolioUser> userManager, RoleManager<PortfolioRole> roleManager)
+            : base(repository, userManager, roleManager)
         {
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -22,14 +23,15 @@ namespace PortfolioWeb.Controllers
         private readonly UserManager<PortfolioUser> _userManager;
         private readonly SignInManager<PortfolioUser> _signInManager;
         private readonly RoleManager<PortfolioRole> _roleManager;
-        private readonly AppSettings _appsettings;
-        ITokenService _tokenService;
+        private readonly ITokenService _tokenService;
 
         public AccountController(UserManager<PortfolioUser> userManager,
-            SignInManager<PortfolioUser> signInManager, ITokenService tokenService)
+            SignInManager<PortfolioUser> signInManager, RoleManager<PortfolioRole> roleManager,
+            ITokenService tokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _tokenService = tokenService;
         }
 
@@ -57,8 +59,17 @@ namespace PortfolioWeb.Controllers
                 {
                     return Unauthorized(result);
                 }
+
                 await _signInManager.PasswordSignInAsync(user, viewModel.Password, false, false);
-                return Ok(_tokenService.GenerateToken(user.Id));
+
+                // only simple users can be added through simple registration
+                // admin users only by db or in-app setup, for reasons of simplicity
+                await _userManager.AddToRoleAsync(user, Constants.USER_ROLE);
+               
+                var userRoleId = await _roleManager.FindByNameAsync(Constants.USER_ROLE);
+                
+                // we add the id of the user role only so that no meaningful info is sent out to the client
+                return Ok(_tokenService.GenerateToken(user.Id, userRoleId.Id.ToString()));
             }
             catch
             {
@@ -81,10 +92,17 @@ namespace PortfolioWeb.Controllers
                     {
                         return NotFound($"The user with the username \"${viewModel.Username}\" is not registered");
                     }
+
                     var signInResult = await _signInManager.PasswordSignInAsync(viewModel.Username, viewModel.Password, false, false);
+
+                    var roles = await _userManager.GetRolesAsync(userInDb);
+
+                    // it is a scenario, where a user can have only 1 role
+                    var userRoleId = await _roleManager.FindByNameAsync(roles.First());
+
                     if (signInResult.Succeeded)
                     {
-                        return Ok(_tokenService.GenerateToken(userInDb.Id));
+                        return Ok(_tokenService.GenerateToken(userInDb.Id, userRoleId.Id.ToString()));
                     }
                     return Unauthorized();
                 }
@@ -93,7 +111,7 @@ namespace PortfolioWeb.Controllers
             catch
             {
                    return StatusCode(StatusCodes.Status500InternalServerError,
-                        $"Unexpectedf error during login of user {viewModel.Username}");
+                        $"Unexpected error during login of user {viewModel.Username}");
             }
         }
 
