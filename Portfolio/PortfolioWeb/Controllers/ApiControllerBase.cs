@@ -104,6 +104,10 @@ namespace PortfolioWeb.Controllers
                 {
                     if (await LoggedInUserAuthorizedToPerformAction(value.UserId))
                     {
+                        var inDb = await _repository.GetElementAsync(value.Id, await IsUserAdmin());
+                        if (inDb.UserId != value.UserId)
+                            return Forbid($"The user is not the original owner of the entity {value.GetType().Name}");
+
                         await _repository.UpdateAsync(value);
                         return Accepted();
                     }
