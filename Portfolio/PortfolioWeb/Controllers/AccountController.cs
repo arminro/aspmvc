@@ -130,5 +130,30 @@ namespace PortfolioWeb.Controllers
                     $"Unexpectedf error during logging out");
             }
         }
+
+        [HttpGet]
+        [Route("api/[controller]/")]
+        public async Task<IActionResult> Get()
+        {
+            try
+            {
+                var userId = Guid.Parse(User.Claims.FirstOrDefault(e => e.Type == "aud").Value);
+                var user = await _userManager.FindByIdAsync(userId.ToString());
+                if (user == null)
+                    return NotFound();
+                UserViewModel model = new UserViewModel()
+                {
+                    Description = user.Description,
+                    Id = user.Id,
+                    Name = user.Name
+                };
+                return Ok(model);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    $"Unexpectedf error during logging out");
+            }
+        }
     }
 }
