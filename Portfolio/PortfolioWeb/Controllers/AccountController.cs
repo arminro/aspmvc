@@ -145,7 +145,8 @@ namespace PortfolioWeb.Controllers
                 {
                     Description = user.Description,
                     Id = user.Id,
-                    Name = user.Name
+                    Name = user.Name,
+                    Username = user.UserName
                 };
                 return Ok(model);
             }
