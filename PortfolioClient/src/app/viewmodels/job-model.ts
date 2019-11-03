@@ -5,4 +5,10 @@ export class Job  {
   public endDate: Date;
   public description: string;
   public userId: string;
+  public id: string;
+
+
+  public constructor(init?: Partial<Job>) {
+    Object.assign(this, init);
+  }
 }

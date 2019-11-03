@@ -1,36 +1,78 @@
-<nav class="navbar navbar-light bg-light">
-  <span class="navbar-brand mb-0 h1">Portfolio</span>
-</nav>
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="#">Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">My Portfolio</li>
-  </ol>
+<html>
+
+
+<head>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+</head>
+
+<nav class="navbar navbar-light bg-secondary">
+  <span class="navbar-brand mb-0 h1">{{pageTitle}}</span>
 </nav>
 
 <!-- Main page on user data -->
 <div class="jumbotron">
-  <h1 class="display-4">Hello, world!</h1>
-  <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+  <h1 class="display-4">{{this.user.username}}</h1>
+  <p class="lead">The professional portfolio of {{this.user.name}}</p>
   <hr class="my-4">
-  <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-  <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+  <p>{{this.user.description}}</p>
 </div>
 
-<!-- User jobs -->
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">Card title</h5>
-    <p class="card-text">This is another card with title and supporting text below. This card has some additional content to make it slightly taller overall.</p>
-    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+<div class="jumbotron jumbotron-header">
+  <h2 class="display-4">Employment</h2>
+</div>
+
+<div class="container" *ngFor='let job of this.jobs'>
+  <div class="card">
+    <div class=card-header>
+        <h3 class="card-title text-secondary">{{job.employer}}</h3>
+    </div>
+    <div class="card-body">
+      <p class="card-text text-secondary">{{job.position}}</p>
+      <p class="card-text text-secondary">From {{job.startDate}}</p>
+      <p class="card-text text-secondary">To {{job.endDate}}</p>
+      <p class="card-text"><small class="text-muted">{{job.description}}</small></p>
+    </div>
+    <div class="card-footer">
+        <div>
+            <a class="btn btn-dark">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a class="btn btn-dark">
+                <i class="fas fa-trash"></i>
+            </a>
+        </div>
+    </div>
   </div>
 </div>
 
-<!-- User skills -->
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">Card title</h5>
-    <p class="card-text">This is another card with title and supporting text below. This card has some additional content to make it slightly taller overall.</p>
-    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+<div class="jumbotron jumbotron-header">
+  <h2 class="display-4">Skills</h2>
+</div>
+
+<div class="container" *ngFor='let skill of this.skills'>
+   <!-- User skills -->
+   <div class="card">
+
+      <div class="card-header text-secondary">
+          <h3>{{skill.skillName}}</h3>
+      </div>
+      <br>
+      <div class="card-body list-group-flush text-muted">
+          <span>
+          {{skill.skillDescription}}
+          </span>
+      </div>
+      <div class="card-footer">
+              <div>
+                  <a class="btn btn-dark">
+                      <i class="fas fa-edit"></i>
+                  </a>
+                  <a class="btn btn-dark">
+                      <i class="fas fa-trash"></i>
+                  </a>
+              </div>
+      </div>
   </div>
 </div>
+</html>
+
