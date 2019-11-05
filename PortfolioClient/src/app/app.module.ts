@@ -9,6 +9,13 @@ import { MyportfolioComponent } from './components/myportfolio/myportfolio.compo
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { LogoutComponent } from './components/logout/logout.component';
+import { AddJobComponent } from './components/job/add-job/add-job.component';
+import { EditJobComponent } from './components/job/edit-job/edit-job.component';
+import { DeleteJobComponent } from './components/job/delete-job/delete-job.component';
+import { AddSkillComponent } from './components/skill/add-skill/add-skill.component';
+import { EditSkillComponent } from './components/skill/edit-skill/edit-skill.component';
+import { DeleteSkillComponent } from './components/skill/delete-skill/delete-skill.component';
+
 
 @NgModule({
   declarations: [
@@ -17,7 +24,13 @@ import { LogoutComponent } from './components/logout/logout.component';
     MyportfolioComponent,
     LoginComponent,
     RegisterComponent,
-    LogoutComponent
+    LogoutComponent,
+    AddJobComponent,
+    EditJobComponent,
+    DeleteJobComponent,
+    AddSkillComponent,
+    EditSkillComponent,
+    DeleteSkillComponent
   ],
   imports: [
     AlertModule.forRoot(),

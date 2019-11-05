@@ -17,8 +17,12 @@
   <p>{{this.user.description}}</p>
 </div>
 
-<div class="jumbotron jumbotron-header">
+
+<div class="jumbotron jumbotron-header" *ngIf='jobs.length > 0'>
   <h2 class="display-4">Employment</h2>
+  <a class="btn btn-dark">
+      <i class="fas fa-plus"></i>
+  </a>
 </div>
 
 <div class="container" *ngFor='let job of this.jobs'>
@@ -45,8 +49,11 @@
   </div>
 </div>
 
-<div class="jumbotron jumbotron-header">
+<div class="jumbotron jumbotron-header" *ngIf='jobs.length > 0'>
   <h2 class="display-4">Skills</h2>
+  <a class="btn btn-dark">
+      <i class="fas fa-plus"></i>
+  </a>
 </div>
 
 <div class="container" *ngFor='let skill of this.skills'>
