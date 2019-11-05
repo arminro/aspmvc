@@ -14,5 +14,7 @@ namespace PortfolioWeb.ViewModels
         public string Description { get; set; }
 
         public string Username { get; set; }
+
+        public string Token { get; set; }
     }
 }
