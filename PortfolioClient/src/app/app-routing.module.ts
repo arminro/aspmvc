@@ -1,3 +1,4 @@
+import { AuthenticationGuardService } from './guards/authentication-guard.service';
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
 import { AccountComponent } from './components/account/account.component';
@@ -14,7 +15,7 @@ const routes: Routes = [
 
 {
   path: 'me',
-  component: MyportfolioComponent
+  component: MyportfolioComponent, canActivate: [AuthenticationGuardService]
 },
 {
   path: 'login',

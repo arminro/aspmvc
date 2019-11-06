@@ -1,27 +1,65 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { catchError, tap, map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
+import { User } from '../viewmodels/user-model';
+import { Login } from '../viewmodels/login-model';
+
 import { Register } from '../viewmodels/register-model';
 
+
+// based on: https://jasonwatmore.com/post/2018/10/29/angular-7-user-registration-and-login-example-tutorial
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  apiRoot = 'https://localhost:44375';
-  apiUrl = '/api/account';
+  // easily changed
+  // todo: get this from config
+  private apiRoot = 'https://localhost:44375';
+  private apiUrl = '/api/account';
+  private fullUrl: string;
 
-  constructor(private readonly http: HttpClient) { }s
+  private currentUserSubject: BehaviorSubject<User>; // this will notify the other services if the user changes
+  public currentUser: Observable<User>;
 
-   static getBearer(): string {
-    // tslint:disable-next-line: max-line-length
-    return('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjNhNTNjN2EyLTVmYjktNDc2ZC0zMGM0LTA4ZDc1ZGZiZGI1ZSIsIm5iZiI6MTU3MjU2NDQ4OSwiZXhwIjoxNTcyNTkzMjg5LCJpYXQiOjE1NzI1NjQ0ODksImF1ZCI6IjNhNTNjN2EyLTVmYjktNDc2ZC0zMGM0LTA4ZDc1ZGZiZGI1ZSJ9.bqPkheD7A6Rr9X8o_yV3PWte_SYBNcBQtIM5nVJNLnY');
+  constructor(private readonly http: HttpClient) {
+    this.fullUrl = `${this.apiRoot}/${this.apiUrl}`;
+    this.currentUserSubject = new BehaviorSubject<User>(new User());
+    this.currentUser = this.currentUserSubject.asObservable();
   }
 
-
-  register(model: Register): Observable<Job> {
-    return this.http.post<Job>(this.fullUrl, job, this.httpOptions).pipe(
-      catchError(this.handleError<Job>('createJob'))
-    );
+  public get currentUserValue(): User {
+    return this.currentUserSubject.value;
   }
+
+   public getBearer(): string {
+    return this.currentUserValue.token;
+  }
+
+  login(candidate: Login) {
+    this.http.post<User>(`${this.fullUrl}/login`, candidate)
+        .pipe(
+          tap((resp) => {
+            if (resp && resp.token) {
+              this.currentUserSubject.next(resp); }
+            }));
+}
+
+register(candidate: Register) {
+  this.http.post<User>(`${this.fullUrl}/register`, candidate)
+        .pipe(
+          tap((resp) => {
+            if (resp && resp.token) {
+              this.currentUserSubject.next(resp);
+            }}));
+}
+
+logout() {
+  this.http.post<any>(`${this.fullUrl}/logout`, null);
+  this.currentUserSubject.next(null);
+}
+
+
+
 }

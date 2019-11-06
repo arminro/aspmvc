@@ -15,6 +15,8 @@ import { DeleteJobComponent } from './components/job/delete-job/delete-job.compo
 import { AddSkillComponent } from './components/skill/add-skill/add-skill.component';
 import { EditSkillComponent } from './components/skill/edit-skill/edit-skill.component';
 import { DeleteSkillComponent } from './components/skill/delete-skill/delete-skill.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AppHttpInterceptor } from './interceptors/http-interceptor';
 
 
 @NgModule({
@@ -37,8 +39,13 @@ import { DeleteSkillComponent } from './components/skill/delete-skill/delete-ski
     BrowserModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true
+    }
+  ],
   bootstrap: [AppComponent],
-  entryComponents: [RegisterComponent, LogoutComponent]
+  entryComponents: [RegisterComponent, LogoutComponent],
+
 })
 export class AppModule { }
