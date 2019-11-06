@@ -69,7 +69,7 @@ namespace PortfolioWeb.Controllers
                 var userRoleId = await _roleManager.FindByNameAsync(Constants.USER_ROLE);
                 
                 // we add the id of the user role only so that no meaningful info is sent out to the client
-                return Ok(await CreateLoggedInUserResponse(_tokenService.GenerateToken(user.Id, userRoleId.Id.ToString())));
+                return Ok(CreateLoggedInUserResponse(user, _tokenService.GenerateToken(user.Id, userRoleId.Id.ToString())));
             }
             catch
             {
@@ -102,7 +102,7 @@ namespace PortfolioWeb.Controllers
 
                     if (signInResult.Succeeded)
                     {
-                        return Ok(await CreateLoggedInUserResponse(_tokenService.GenerateToken(userInDb.Id, userRoleId.Id.ToString())));
+                        return Ok(CreateLoggedInUserResponse(userInDb, _tokenService.GenerateToken(userInDb.Id, userRoleId.Id.ToString())));
                     }
                     return Unauthorized();
                 }
@@ -133,13 +133,9 @@ namespace PortfolioWeb.Controllers
 
 
 
-        private async Task<UserViewModel> CreateLoggedInUserResponse(string token)
+        private UserViewModel CreateLoggedInUserResponse(PortfolioUser user, string token)
         {
-            // loggedinuser does not seems to work with JWT, so we need to get the user
-            var userId = Guid.Parse(User.Claims.FirstOrDefault(e => e.Type == "aud").Value);
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            if (user == null)
-                return null;
+            // this is a bit more easy on the eyes
             return new UserViewModel()
             {
                 Description = user.Description,
