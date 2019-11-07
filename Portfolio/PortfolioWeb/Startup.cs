@@ -84,7 +84,18 @@ namespace PortfolioWeb
                
                 
             });
-            
+            // normally, if clients are hosted in a different domain, 
+            // only registered clients can reach the server, while users can interact with the client
+            // this setting is for reasons of simplicity
+            services.AddCors(c =>
+            {
+                c.AddPolicy("Cors", options => {
+                    options.AllowAnyOrigin();
+                    options.AllowAnyMethod();
+                    options.AllowAnyHeader();
+                } );
+               });
+
             services.AddSingleton<ITokenService, JWTProvider>();
         }
 
@@ -104,8 +115,8 @@ namespace PortfolioWeb
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
-            // allowing any resource to access whicheves method it choses
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            // allowing any resource to access whichever method it choses
+            app.UseCors("Cors");
             RolesHelper.CreateRoles(serviceProvider);
         }
     }

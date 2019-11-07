@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ namespace PortfolioWeb.Controllers
     //[Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [EnableCors("Cors")]
     public class AccountController : ControllerBase
     {
         private readonly UserManager<PortfolioUser> _userManager;
@@ -81,6 +83,7 @@ namespace PortfolioWeb.Controllers
         [HttpPost]
         [Route("api/[controller]/login")]
         [AllowAnonymous]
+        
         public async Task<IActionResult> Login([FromBody] LoginViewModel viewModel)
         {
             try
@@ -90,7 +93,7 @@ namespace PortfolioWeb.Controllers
                     var userInDb = await _userManager.FindByNameAsync(viewModel.Username);
                     if (userInDb == null)
                     {
-                        return NotFound($"The user with the username \"${viewModel.Username}\" is not registered");
+                        return NotFound($"The user with the username {viewModel.Username.ToUpper()} is not registered");
                     }
 
                     var signInResult = await _signInManager.PasswordSignInAsync(viewModel.Username, viewModel.Password, false, false);
@@ -104,9 +107,10 @@ namespace PortfolioWeb.Controllers
                     {
                         return Ok(CreateLoggedInUserResponse(userInDb, _tokenService.GenerateToken(userInDb.Id, userRoleId.Id.ToString())));
                     }
-                    return Unauthorized();
+                    // for security reasons, this is bad practice, but it shows how many ways the app can respond
+                    return Unauthorized($"Incorrect password for user {viewModel.Username.ToUpper()}");
                 }
-                return BadRequest();
+                return BadRequest(ModelState);
             }
             catch
             {
