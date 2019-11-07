@@ -15,9 +15,11 @@ export class AuthenticationGuardService implements CanActivate  {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     const currentUser = this.authSrv.currentUserValue;
-    if (currentUser) {
+    console.log(currentUser);
+    if (currentUser && currentUser !== undefined) {
+      console.log(currentUser);
             // authorised so return true
-            return true;
+      return true;
     }
     this.router.navigate(['/login'], { queryParams: { returnUrl: state.url }});
     return false;

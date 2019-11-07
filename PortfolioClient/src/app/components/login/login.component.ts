@@ -28,8 +28,9 @@ export class LoginComponent implements OnInit {
     this.authSrv.login(new Login({username: this.username, password: this.password}))
     .subscribe(
         data => {
+          if (data) {
             this.router.navigate([this.returnUrl]);
-        });
+          }});
   }
 
 

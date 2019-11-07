@@ -29,7 +29,7 @@ export class AuthService {
 
   constructor(private readonly http: HttpClient) {
     this.fullUrl = `${this.apiRoot}${this.apiUrl}`;
-    this.currentUserSubject = new BehaviorSubject<User>(new User());
+    this.currentUserSubject = new BehaviorSubject<User>(null); // default value is null for an authenticated user
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
@@ -45,14 +45,13 @@ export class AuthService {
     return this.http.post<User>(`${this.fullUrl}/login`, JSON.stringify(candidate), this.httpOptions)
         .pipe(
           tap((resp) => {
-            console.log(resp.token);
             if (resp && resp.token) {
               this.currentUserSubject.next(resp); }
             }));
 }
 
 register(candidate: Register) {
-  this.http.post<User>(`${this.fullUrl}/register`, candidate, this.httpOptions)
+  return this.http.post<User>(`${this.fullUrl}/register`, candidate, this.httpOptions)
         .pipe(
           tap((resp) => {
             if (resp && resp.token) {
@@ -61,7 +60,7 @@ register(candidate: Register) {
 }
 
 logout() {
-  this.http.post<any>(`${this.fullUrl}/logout`, null, this.httpOptions);
+  return this.http.post<any>(`${this.fullUrl}/logout`, null, this.httpOptions);
   this.currentUserSubject.next(null);
 }
 

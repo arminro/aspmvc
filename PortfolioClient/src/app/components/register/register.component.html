@@ -11,14 +11,12 @@
     <div class="jumbotron">
         <h2 class="display-1">Welcome</h2>
       </div>
-    <!-- Login Form -->
-    <form>
-      <input type="text" id="login" class="fadeIn second" name="login" placeholder="username">
-      <input type="text" id="login" class="fadeIn second" name="name" placeholder="name">
-      <input type="text" id="login" class="fadeIn second" name="descr" placeholder="description">
-      <input type="text" id="password" class="fadeIn third" name="login" placeholder="password">
-      <input type="submit" class="btn btn-dark" value="Register">
-    </form>
+
+      <input type="text" id="login" class="fadeIn second" name="login" placeholder="username"[(ngModel)]="this.username" >
+      <input type="text" id="name" class="fadeIn second" name="name" placeholder="name" [(ngModel)]="this.name">
+      <input type="text" id="descr" class="fadeIn second" name="descr" placeholder="description" [(ngModel)]="this.descr">
+      <input type="password" id="password" class="fadeIn third" name="login" placeholder="password" [(ngModel)]="this.password">
+      <input type="submit" class="btn btn-dark" value="Register" (click)=onSubmit()>
   </div>
 </div>
 </html>

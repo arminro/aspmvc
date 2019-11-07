@@ -15,14 +15,19 @@
   <p class="lead">The professional portfolio of {{this.user.name}}</p>
   <hr class="my-4">
   <p>{{this.user.description}}</p>
+    <a class="btn btn-dark">
+      <i class="fas fa-plus"></i>
+      Job
+    </a>
+    <a class="btn btn-dark">
+        <i class="fas fa-plus"></i>
+        SKill
+      </a>
 </div>
-
 
 <div class="jumbotron jumbotron-header" *ngIf='jobs && jobs.length > 0'>
   <h2 class="display-4">Employment</h2>
-  <a class="btn btn-dark">
-      <i class="fas fa-plus"></i>
-  </a>
+
 </div>
 
 <div class="container" *ngFor='let job of this.jobs'>
@@ -51,9 +56,6 @@
 
 <div class="jumbotron jumbotron-header" *ngIf='skills && skills.length > 0'>
   <h2 class="display-4">Skills</h2>
-  <a class="btn btn-dark">
-      <i class="fas fa-plus"></i>
-  </a>
 </div>
 
 <div class="container" *ngFor='let skill of this.skills'>
