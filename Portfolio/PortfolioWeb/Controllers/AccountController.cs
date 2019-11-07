@@ -59,7 +59,7 @@ namespace PortfolioWeb.Controllers
                 var result = await _userManager.CreateAsync(user, viewModel.Password);
                 if (!result.Succeeded)
                 {
-                    return Unauthorized(result);
+                    return Unauthorized(result.Errors.Select(err => err.Description).ToList());
                 }
 
                 await _signInManager.PasswordSignInAsync(user, viewModel.Password, false, false);

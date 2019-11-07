@@ -61,7 +61,7 @@ namespace PortfolioWeb.Controllers
                 var entity = await _repository.GetElementAsync(elementId, await IsUserAdmin());
                 if (entity == null)
                 {
-                    return NotFound();
+                    return NotFound("The requested element is not available.");
                 }
                 else
                 {
@@ -113,10 +113,10 @@ namespace PortfolioWeb.Controllers
                         await _repository.UpdateAsync(value);
                         return Accepted();
                     }
-                    return Unauthorized();
+                    return Unauthorized("The user is not authorized to perform the requested operation.");
                     
                 }
-                return BadRequest();
+                return BadRequest(ModelState);
             }
             catch (Exception)
             {
@@ -134,7 +134,7 @@ namespace PortfolioWeb.Controllers
                 var entity = await _repository.GetElementAsync(value.Id, await IsUserAdmin());
                 if (entity == null)
                 {
-                    return NotFound();
+                    return NotFound("The user to be deleted is not found in the databse");
                 }
                 else
                 {
@@ -143,7 +143,7 @@ namespace PortfolioWeb.Controllers
                         await _repository.DeleteAsync(entity, await IsUserAdmin());
                         return Ok(entity);
                     }
-                    return Unauthorized();                    
+                    return Unauthorized($"The user is not authorized to perform the requested operation.");                    
                 }
             }
             catch (Exception)
