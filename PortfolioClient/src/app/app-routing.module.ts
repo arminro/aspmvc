@@ -32,12 +32,12 @@ const routes: Routes = [
 
 {
   path: '',
-  redirectTo: '/home',
+  redirectTo: '/me',
   pathMatch: 'full'
 },
 {
   path: '**',
-  redirectTo: '/home',
+  redirectTo: '/me',
   pathMatch: 'full'
 }];
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { User } from '../viewmodels/user-model';
@@ -14,6 +14,10 @@ import { Register } from '../viewmodels/register-model';
 })
 export class AuthService {
 
+  httpOptions = {
+    headers: new HttpHeaders()
+    .set('Content-Type', 'application/json')
+  };
   // easily changed
   // todo: get this from config
   private apiRoot = 'https://localhost:44375';
@@ -24,7 +28,7 @@ export class AuthService {
   public currentUser: Observable<User>;
 
   constructor(private readonly http: HttpClient) {
-    this.fullUrl = `${this.apiRoot}/${this.apiUrl}`;
+    this.fullUrl = `${this.apiRoot}${this.apiUrl}`;
     this.currentUserSubject = new BehaviorSubject<User>(new User());
     this.currentUser = this.currentUserSubject.asObservable();
   }
@@ -38,16 +42,17 @@ export class AuthService {
   }
 
   login(candidate: Login) {
-    this.http.post<User>(`${this.fullUrl}/login`, candidate)
+    return this.http.post<User>(`${this.fullUrl}/login`, JSON.stringify(candidate), this.httpOptions)
         .pipe(
           tap((resp) => {
+            console.log(resp.token);
             if (resp && resp.token) {
               this.currentUserSubject.next(resp); }
             }));
 }
 
 register(candidate: Register) {
-  this.http.post<User>(`${this.fullUrl}/register`, candidate)
+  this.http.post<User>(`${this.fullUrl}/register`, candidate, this.httpOptions)
         .pipe(
           tap((resp) => {
             if (resp && resp.token) {
@@ -56,7 +61,7 @@ register(candidate: Register) {
 }
 
 logout() {
-  this.http.post<any>(`${this.fullUrl}/logout`, null);
+  this.http.post<any>(`${this.fullUrl}/logout`, null, this.httpOptions);
   this.currentUserSubject.next(null);
 }
 

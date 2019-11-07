@@ -1,3 +1,4 @@
+import { AuthService } from './../../services/auth.service';
 import { SkillsService } from './../../services/skills.service';
 import { Component, OnInit } from '@angular/core';
 import { User } from 'src/app/viewmodels/user-model';
@@ -18,20 +19,13 @@ export class MyportfolioComponent implements OnInit {
 
   constructor(
     private readonly jobSrv: JobsService,
-    private readonly skillSrv: SkillsService) { }
+    private readonly skillSrv: SkillsService,
+    private readonly authSrv: AuthService) { }
 
   ngOnInit() {
 
-    this.user = new User({
-      username: 'Renikitten',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-      name: 'Random Reni',
-      id: '1234-1234-1234-1234'
-    });
+    this.user = this.authSrv.currentUserValue;
     this.pageTitle = `${this.user.name}\'s Portfolio`;
-
-    this.skills = this.skillSrv.getSkills();
-    this.jobs = this.jobSrv.getJobs();
   }
 
 }

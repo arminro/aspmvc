@@ -1,6 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AlertModule } from 'ngx-bootstrap';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,8 +17,9 @@ import { DeleteJobComponent } from './components/job/delete-job/delete-job.compo
 import { AddSkillComponent } from './components/skill/add-skill/add-skill.component';
 import { EditSkillComponent } from './components/skill/edit-skill/edit-skill.component';
 import { DeleteSkillComponent } from './components/skill/delete-skill/delete-skill.component';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppHttpInterceptor } from './interceptors/http-interceptor';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -36,8 +39,12 @@ import { AppHttpInterceptor } from './interceptors/http-interceptor';
   ],
   imports: [
     AlertModule.forRoot(),
+    BrowserAnimationsModule,
+    ToastrModule.forRoot(),
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule
   ],
   providers: [
     {
