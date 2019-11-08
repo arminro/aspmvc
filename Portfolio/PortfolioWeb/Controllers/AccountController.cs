@@ -131,7 +131,7 @@ namespace PortfolioWeb.Controllers
             catch
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Unexpectedf error during logging out");
+                    $"Unexpected error during logging out");
             }
         }
 
