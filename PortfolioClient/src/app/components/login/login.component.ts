@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { Login } from 'src/app/viewmodels/login-model';
 import { Router } from '@angular/router';
+import { ComponentBase } from '../component-base';
+import { AuthcomponentBase } from '../authcomponent-base';
 
 
 @Injectable({ providedIn: 'root' })
@@ -11,17 +13,15 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent extends AuthcomponentBase {
 
   username: string;
   password: string;
   returnUrl: string;
 
   // todo: data binding to form elements
-  constructor(private readonly authSrv: AuthService, private readonly router: Router) { }
-
-  ngOnInit() {
-    this.returnUrl = '/me';
+  constructor(public authSrv: AuthService, public router: Router) {
+    super(router, authSrv);
   }
 
   onSubmit() {
@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
     .subscribe(
         data => {
           if (data) {
-            this.router.navigate([this.returnUrl]);
+            this.redirectTo('me');
           }});
   }
 

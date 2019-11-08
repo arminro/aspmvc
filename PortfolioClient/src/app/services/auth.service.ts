@@ -18,6 +18,9 @@ export class AuthService {
     headers: new HttpHeaders()
     .set('Content-Type', 'application/json')
   };
+
+
+
   // easily changed
   // todo: get this from config
   private apiRoot = 'https://localhost:44375';
@@ -51,6 +54,7 @@ export class AuthService {
 }
 
 register(candidate: Register) {
+
   return this.http.post<User>(`${this.fullUrl}/register`, candidate, this.httpOptions)
         .pipe(
           tap((resp) => {
@@ -60,8 +64,17 @@ register(candidate: Register) {
 }
 
 logout() {
-  return this.http.post<any>(`${this.fullUrl}/logout`, null, this.httpOptions);
-  this.currentUserSubject.next(null);
+
+  const httpLogoutOptions = {
+    headers: new HttpHeaders()
+    .set('Content-Type', 'application/json')
+    .set('Authorization',  `Bearer ${this.getBearer()}`)
+  };
+  return this.http.post<any>(`${this.fullUrl}/logout`, null, httpLogoutOptions)
+  .pipe(
+  tap(() => {
+    this.currentUserSubject.next(null);
+  }));
 }
 
 
