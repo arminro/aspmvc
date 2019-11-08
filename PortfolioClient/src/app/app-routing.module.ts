@@ -1,3 +1,4 @@
+import { AddJobComponent } from './components/job/add-job/add-job.component';
 import { AuthenticationGuardService } from './guards/authentication-guard.service';
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
@@ -28,6 +29,11 @@ const routes: Routes = [
 {
   path: 'register',
   component: RegisterComponent
+},
+
+{
+  path: 'jobs/add',
+  component: AddJobComponent,  canActivate: [AuthenticationGuardService]
 },
 
 {

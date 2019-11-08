@@ -27,7 +27,7 @@ apiUrl = '/api/jobs';
   private fullUrl: string;
 
   constructor(private readonly http: HttpClient, private readonly authSrv: AuthService) {
-      this.fullUrl = `${this.apiRoot}/${this.apiUrl}`;
+      this.fullUrl = `${this.apiRoot}${this.apiUrl}`;
    }
 
   getJobs(): Observable<Job[]> {
@@ -39,15 +39,16 @@ apiUrl = '/api/jobs';
   }
 
 
-  createJob(job: Job): Observable<Job> {
-    return this.http.post<Job>(this.fullUrl, job, this.httpOptions);
+  createJob(job: Job) {
+    console.log(this.httpOptions);
+    return this.http.post<Job>(this.fullUrl, JSON.stringify(job), this.httpOptions);
   }
 
-  updateJob(job: Job): Observable<any> {
+  updateJob(job: Job) {
     return this.http.put(this.fullUrl, job, this.httpOptions);
   }
 
-  deleteProduct(job: Job): Observable<Job> {
+  deleteProduct(job: Job) {
     return this.http.delete<Job>(this.fullUrl, this.httpOptions);
   }
 }

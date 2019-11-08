@@ -1,0 +1,22 @@
+<html>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+      <div class="jumbotron">
+          <h2 class="display-1">Add new job</h2>
+        </div>
+
+      <input type="text" id="employer" class="fadeIn third" name="employer" placeholder="employer" [(ngModel)]="this.jobToAdd.employer">
+      <input type="text" id="pos" class="fadeIn second" name="pos" placeholder="position" [(ngModel)]="this.jobToAdd.position">
+      <input type="date" id="startDate" class="fadeIn third" name="startDate" placeholder="starting date" [(ngModel)]="this.jobToAdd.startDate">
+      <input type="date" id="endDate" class="fadeIn third" name="endDate" placeholder="ending date" [(ngModel)]="this.jobToAdd.endDate">
+      <input type="text" id="description" class="fadeIn third" name="description" placeholder="description" [(ngModel)]="this.jobToAdd.description">
+      <input type="submit" class="fadeIn fourth" value="Log In" (click)="onSubmit()">
+  </div>
+</div>
+</html>
+
