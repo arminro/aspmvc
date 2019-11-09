@@ -6,9 +6,9 @@
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav">
       <a class="nav-item nav-link" [routerLink]="'/me'">My Profile</a>
-      <a class="nav-item nav-link" [routerLink]="'/login'">Login</a>
-      <a class="nav-item nav-link" [routerLink]="'/register'">Register</a>
-      <a class="nav-item nav-link" [routerLink]="'/logout'">Logout</a>
+      <a class="nav-item nav-link" [routerLink]="'/login'" *ngIf="!this.authSrv.currentUserValue">Login</a>
+      <a class="nav-item nav-link" [routerLink]="'/register'" *ngIf="!this.authSrv.currentUserValue">Register</a>
+      <a class="nav-item nav-link" [routerLink]="'/logout'" *ngIf="this.authSrv.currentUserValue">Logout</a>
     </div>
   </div>
 </nav>

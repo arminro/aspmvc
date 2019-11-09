@@ -20,6 +20,8 @@ export class JobsService {
   .set('Authorization',  `Bearer ${this.authSrv.getBearer()}`)
 };
 
+
+
 apiRoot = 'https://localhost:44375';
 apiUrl = '/api/jobs';
 
@@ -48,7 +50,14 @@ apiUrl = '/api/jobs';
     return this.http.put(this.fullUrl, job, this.httpOptions);
   }
 
-  deleteProduct(job: Job) {
-    return this.http.delete<Job>(this.fullUrl, this.httpOptions);
+  deleteJob(job: Job) {
+
+    const deleteOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json', Authorization: `Bearer ${this.authSrv.getBearer()}`
+      }),
+      body: `${JSON.stringify(job.userId)}`,
+    };
+    return this.http.delete<Job>(`${this.fullUrl}/${job.id}`,  deleteOptions);
   }
 }

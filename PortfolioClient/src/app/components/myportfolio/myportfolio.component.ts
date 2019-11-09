@@ -1,3 +1,4 @@
+import { PigeonService } from './../../services/pigeon.service';
 import { Router } from '@angular/router';
 import { AuthService } from './../../services/auth.service';
 import { SkillsService } from './../../services/skills.service';
@@ -23,7 +24,8 @@ export class MyportfolioComponent extends ComponentBase implements OnInit {
     private readonly jobSrv: JobsService,
     private readonly skillSrv: SkillsService,
     public authSrv: AuthService,
-    public router: Router) {
+    public router: Router,
+    private readonly pigeonSrv: PigeonService) {
         super(router);
      }
 
@@ -37,11 +39,41 @@ export class MyportfolioComponent extends ComponentBase implements OnInit {
           if (data) {
             this.jobs = data;
           }});
+
+    this.skillSrv.getSkills()
+          .subscribe(
+              (data: Skill[]) => {
+                if (data) {
+                  this.skills = data;
+                }});
   }
 
+
+
   addJobClick() {
-    console.log("addjob");
     this.redirectTo('jobs/add');
+  }
+
+  editJobClick(currentJob: Job) {
+    this.pigeonSrv.sendData(JSON.stringify(currentJob));
+    this.redirectTo('jobs/edit');
+  }
+  deleteJobClick(currentJob: Job) {
+    this.pigeonSrv.sendData(JSON.stringify(currentJob));
+    this.redirectTo('jobs/delete');
+  }
+
+  addSkillClick() {
+    this.redirectTo('skills/add');
+  }
+
+  editSkillClick(currentSkill: Skill) {
+    this.pigeonSrv.sendData(JSON.stringify(currentSkill));
+    this.redirectTo('skills/edit');
+  }
+  deleteSkillClick(currentSkill: Skill) {
+    this.pigeonSrv.sendData(JSON.stringify(currentSkill));
+    this.redirectTo('skills/delete');
   }
 
 }

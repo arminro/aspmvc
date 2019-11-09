@@ -3,10 +3,10 @@ import { NgModule } from '@angular/core';
 import { AlertModule } from 'ngx-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { DateValueAccessorModule } from 'angular-date-value-accessor';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AccountComponent } from './components/account/account.component';
 import { MyportfolioComponent } from './components/myportfolio/myportfolio.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
@@ -25,7 +25,6 @@ import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [
     AppComponent,
-    AccountComponent,
     MyportfolioComponent,
     LoginComponent,
     RegisterComponent,
@@ -44,7 +43,8 @@ import { FormsModule } from '@angular/forms';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    DateValueAccessorModule
   ],
   providers: [
     {

@@ -7,14 +7,11 @@
 <div class="wrapper fadeInDown">
   <div id="formContent">
       <div class="jumbotron">
-          <h2 class="display-1">Add new job</h2>
+          <h2 class="display-1">Add new skill</h2>
         </div>
 
-      <input type="text" id="employer" class="fadeIn third" name="employer" placeholder="employer" [(ngModel)]="this.jobToAdd.employer">
-      <input type="text" id="pos" class="fadeIn second" name="pos" placeholder="position" [(ngModel)]="this.jobToAdd.position">
-      <input type="date" id="startDate"  name="startDate" [(ngModel)]="this.jobToAdd.startDate">
-      <input type="date" id="endDate"  name="endDate" [(ngModel)]="this.jobToAdd.endDate">
-      <input type="text" id="description" class="fadeIn third" name="description" placeholder="description" [(ngModel)]="this.jobToAdd.description">
+      <input type="text" id="employer" class="fadeIn third" name="employer" placeholder="skill name" [(ngModel)]="this.skillToAdd.skillName">
+      <input type="text" id="pos" class="fadeIn second" name="pos" placeholder="description" [(ngModel)]="this.skillToAdd.skillDescription">
 
       <table>
         <tr>
@@ -29,4 +26,3 @@
   </div>
 </div>
 </html>
-

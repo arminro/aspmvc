@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, tap, catchError } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { User } from '../viewmodels/user-model';
 import { Login } from '../viewmodels/login-model';
 
@@ -32,7 +32,8 @@ export class AuthService {
 
   constructor(private readonly http: HttpClient) {
     this.fullUrl = `${this.apiRoot}${this.apiUrl}`;
-    this.currentUserSubject = new BehaviorSubject<User>(null); // default value is null for an authenticated user
+    // default value is null for an authenticated user
+    this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('user')));
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
@@ -49,6 +50,7 @@ export class AuthService {
         .pipe(
           tap((resp) => {
             if (resp && resp.token) {
+              localStorage.setItem('user', JSON.stringify(resp));
               this.currentUserSubject.next(resp); }
             }));
 }
@@ -59,6 +61,7 @@ register(candidate: Register) {
         .pipe(
           tap((resp) => {
             if (resp && resp.token) {
+              localStorage.setItem('user', JSON.stringify(resp));
               this.currentUserSubject.next(resp);
             }}));
 }
@@ -73,6 +76,7 @@ logout() {
   return this.http.post<any>(`${this.fullUrl}/logout`, null, httpLogoutOptions)
   .pipe(
   tap(() => {
+    localStorage.removeItem('user');
     this.currentUserSubject.next(null);
   }));
 }

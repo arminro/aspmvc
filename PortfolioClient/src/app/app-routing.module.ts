@@ -1,18 +1,19 @@
+import { DeleteSkillComponent } from './components/skill/delete-skill/delete-skill.component';
+import { EditSkillComponent } from './components/skill/edit-skill/edit-skill.component';
+import { AddSkillComponent } from './components/skill/add-skill/add-skill.component';
+import { EditJobComponent } from './components/job/edit-job/edit-job.component';
 import { AddJobComponent } from './components/job/add-job/add-job.component';
 import { AuthenticationGuardService } from './guards/authentication-guard.service';
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
-import { AccountComponent } from './components/account/account.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { MyportfolioComponent } from './components/myportfolio/myportfolio.component';
 import { LogoutComponent } from './components/logout/logout.component';
+import { DeleteJobComponent } from './components/job/delete-job/delete-job.component';
 
 
 const routes: Routes = [
-{
-  path: 'account', component: AccountComponent
-},
 
 {
   path: 'me',
@@ -24,7 +25,7 @@ const routes: Routes = [
 },
 {
   path: 'logout',
-  component: LogoutComponent
+  component: LogoutComponent, canActivate: [AuthenticationGuardService]
 },
 {
   path: 'register',
@@ -34,6 +35,30 @@ const routes: Routes = [
 {
   path: 'jobs/add',
   component: AddJobComponent,  canActivate: [AuthenticationGuardService]
+},
+
+{
+  path: 'jobs/edit',
+  component: EditJobComponent,  canActivate: [AuthenticationGuardService]
+},
+
+{
+  path: 'jobs/delete',
+  component: DeleteJobComponent,  canActivate: [AuthenticationGuardService]
+},
+{
+  path: 'skills/add',
+  component: AddSkillComponent,  canActivate: [AuthenticationGuardService]
+},
+
+{
+  path: 'skills/edit',
+  component: EditSkillComponent,  canActivate: [AuthenticationGuardService]
+},
+
+{
+  path: 'skills/delete',
+  component: DeleteSkillComponent,  canActivate: [AuthenticationGuardService]
 },
 
 {

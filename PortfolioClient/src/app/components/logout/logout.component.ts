@@ -22,4 +22,8 @@ export class LogoutComponent extends AuthcomponentBase {
     });
   }
 
+  onCancel() {
+    this.redirectTo('me');
+  }
+
 }

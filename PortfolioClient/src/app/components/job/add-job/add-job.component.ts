@@ -3,7 +3,6 @@ import { Job } from './../../../viewmodels/job-model';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
-import { ComponentBase } from '../../component-base';
 import { JobsService } from 'src/app/services/jobs.service';
 import { JobcomponentBase } from '../jobcomponent-base';
 
@@ -30,6 +29,10 @@ export class AddJobComponent extends JobcomponentBase implements OnInit {
         data => {
             this.redirectTo('me');
           });
+  }
+
+  onCancel() {
+    this.redirectTo('me');
   }
 
 }

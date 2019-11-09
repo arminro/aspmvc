@@ -11,7 +11,16 @@
           <h2 class="display-1">Goodbye</h2>
         </div>
     <!-- Login Form -->
-      <input type="submit" class="fadeIn fourth" value="Log Out" (click)=onSubmit()>
+    <table>
+      <tr>
+        <td>
+          <input type="submit" class="action-button" value="Log Out" (click)="onSubmit()">
+        </td>
+        <td>
+          <input type="submit" class="action-button" value="Cancel" (click)="onCancel()">
+        </td>
+      </tr>
+    </table>
   </div>
 </div>
 </html>

@@ -19,7 +19,7 @@
       <i class="fas fa-plus"></i>
       Job
     </a>
-    <a class="btn btn-dark">
+    <a class="btn btn-dark" (click)=addSkillClick() >
         <i class="fas fa-plus"></i>
         SKill
       </a>
@@ -37,16 +37,16 @@
     </div>
     <div class="card-body">
       <p class="card-text text-secondary">{{job.position}}</p>
-      <p class="card-text text-secondary">From {{job.startDate}}</p>
-      <p class="card-text text-secondary">To {{job.endDate}}</p>
+      <p class="card-text text-secondary">From {{job.startDate | date:'dd/MM/yyyy'}}</p>
+      <p class="card-text text-secondary">To {{job.endDate | date:'dd/MM/yyyy'}}</p>
       <p class="card-text"><small class="text-muted">{{job.description}}</small></p>
     </div>
     <div class="card-footer">
         <div>
-            <a class="btn btn-dark">
+            <a class="btn btn-dark" (click)="editJobClick(job)">
                 <i class="fas fa-edit"></i>
             </a>
-            <a class="btn btn-dark">
+            <a class="btn btn-dark" (click)="deleteJobClick(job)">
                 <i class="fas fa-trash"></i>
             </a>
         </div>
@@ -73,10 +73,10 @@
       </div>
       <div class="card-footer">
               <div>
-                  <a class="btn btn-dark">
+                  <a class="btn btn-dark" (click)="editSkillClick(skill)">
                       <i class="fas fa-edit"></i>
                   </a>
-                  <a class="btn btn-dark">
+                  <a class="btn btn-dark" (click)="deleteSkillClick(skill)">
                       <i class="fas fa-trash"></i>
                   </a>
               </div>

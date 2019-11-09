@@ -1,0 +1,29 @@
+<html>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+      <div class="jumbotron">
+          <h2 class="display-1">Edit</h2>
+        </div>
+      <input type="text" id="employer" class="fadeIn third" name="employer" placeholder="employer" [(ngModel)]="this.currentJob.employer">
+      <input type="text" id="pos" class="fadeIn second" name="pos" placeholder="position" [(ngModel)]="this.currentJob.position">
+      <input type="date" id="startDate" class="fadeIn third" name="startDate" placeholder="starting date" [(ngModel)]="this.currentJob.startDate">
+      <input type="date" id="endDate" class="fadeIn third" name="endDate" placeholder="ending date" [(ngModel)]="this.currentJob.endDate">
+      <input type="text" id="description" class="fadeIn third" name="description" placeholder="description" [(ngModel)]="this.currentJob.description">
+      <table>
+        <tr>
+          <td>
+            <input type="submit" class="action-button" value="Edit" (click)="onSubmit()">
+          </td>
+          <td>
+            <input type="submit" class="action-button" value="Cancel" (click)="onCancel()">
+          </td>
+        </tr>
+      </table>
+  </div>
+</div>
+</html>
