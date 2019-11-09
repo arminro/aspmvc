@@ -125,20 +125,20 @@ namespace PortfolioWeb.Controllers
             }
         }
 
-        // DELETE api/[entities]
-        [HttpDelete]
-        public virtual async Task<ActionResult> Delete([FromHeader] TEntity value)
+        // DELETE api/[entities]/5555-5555-5555
+        [HttpDelete("{id}")]
+        public virtual async Task<ActionResult> Delete(Guid id, [FromHeader] Guid ownerId)
         {
             try
             {
-                var entity = await _repository.GetElementAsync(value.Id, await IsUserAdmin());
+                var entity = await _repository.GetElementAsync(id, await IsUserAdmin());
                 if (entity == null)
                 {
                     return NotFound("The user to be deleted is not found in the databse");
                 }
                 else
                 {
-                    if(await LoggedInUserAuthorizedToPerformAction(value.UserId))
+                    if(await LoggedInUserAuthorizedToPerformAction(ownerId))
                     {
                         await _repository.DeleteAsync(entity, await IsUserAdmin());
                         return Ok(entity);
@@ -149,7 +149,7 @@ namespace PortfolioWeb.Controllers
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Could not delete element ${value?.GetType().Name}");
+                    $"Could not delete element");
             }
         }
 

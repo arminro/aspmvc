@@ -136,7 +136,6 @@ namespace PortfolioWeb.Controllers
         }
 
 
-
         private UserViewModel CreateLoggedInUserResponse(PortfolioUser user, string token)
         {
             // this is a bit more easy on the eyes
