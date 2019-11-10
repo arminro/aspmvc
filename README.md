@@ -1,7 +1,7 @@
 # aspmvc
 My solution to the university class ASP web development and MVC
 
-Known issues so far: Due to time constraints, I did not have time to fix some of the issues I encountered:
+Known issues so far: due to time constraints, I did not have time to fix some of the issues I encountered:
 - ugly UI :(
 - contents of date field are not displayed on EDIT views
 - general exceptions (e.g., server not responding or some of the http error codes) are not displayed properly
