@@ -1,6 +1,4 @@
 <html>
-
-
 <head>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 </head>
@@ -11,17 +9,17 @@
 
 <!-- Main page on user data -->
 <div class="jumbotron">
-  <h1 class="display-4">{{this.user.username}}</h1>
-  <p class="lead">The professional portfolio of {{this.user.name}}</p>
+  <h1 class="display-4">{{this.authSrv.currentUserValue.username}}</h1>
+  <p class="lead">The professional portfolio of {{this.authSrv.currentUserValue.name}}</p>
   <hr class="my-4">
-  <p>{{this.user.description}}</p>
+  <p>{{this.authSrv.currentUserValue.description}}</p>
     <a class="btn btn-dark" (click)=addJobClick()>
       <i class="fas fa-plus"></i>
       Job
     </a>
     <a class="btn btn-dark" (click)=addSkillClick() >
         <i class="fas fa-plus"></i>
-        SKill
+        Skill
       </a>
 </div>
 

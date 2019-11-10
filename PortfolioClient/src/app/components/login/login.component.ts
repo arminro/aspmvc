@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { Login } from 'src/app/viewmodels/login-model';
 import { Router } from '@angular/router';
-import { ComponentBase } from '../component-base';
 import { AuthcomponentBase } from '../authcomponent-base';
 
 

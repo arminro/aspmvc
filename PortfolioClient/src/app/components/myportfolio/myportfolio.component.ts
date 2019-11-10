@@ -31,8 +31,7 @@ export class MyportfolioComponent extends ComponentBase implements OnInit {
 
   ngOnInit() {
 
-    this.user = this.authSrv.currentUserValue;
-    this.pageTitle = `${this.user.name}\'s Portfolio`;
+    this.pageTitle = `${this.authSrv.currentUserValue.name}\'s Portfolio`;
     this.jobSrv.getJobs()
     .subscribe(
         (data: Job[]) => {

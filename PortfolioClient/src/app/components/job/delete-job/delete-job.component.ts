@@ -29,7 +29,6 @@ export class DeleteJobComponent extends JobcomponentBase implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.deleteText);
     this.jobSrv.deleteJob(this.jobToDelete)
     .subscribe(
         data => {
