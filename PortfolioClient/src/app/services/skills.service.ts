@@ -14,42 +14,39 @@ import { tap } from 'rxjs/operators';
 })
 export class SkillsService {
 
+
+  apiRoot = 'https://localhost:44375';
+  apiUrl = '/api/skills';
+  private fullUrl: string;
   // adding header
   // this part only works due to the authetication guard (auth is earlier than any call here)
- httpOptions = {
-  headers: new HttpHeaders()
-  .set('Content-Type', 'application/json')
-  .set('Authorization',  `Bearer ${this.authSrv.getBearer()}`)
-};
-
-
-
-apiRoot = 'https://localhost:44375';
-apiUrl = '/api/skills';
-
-
-  private fullUrl: string;
+  getHeaders() {
+    return {
+      headers: new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization',  `Bearer ${this.authSrv.getBearer()}`)
+    };
+  }
 
   constructor(private readonly http: HttpClient, private readonly authSrv: AuthService) {
       this.fullUrl = `${this.apiRoot}${this.apiUrl}`;
    }
 
   getSkills(): Observable<Skill[]> {
-    return this.http.get<Skill[]>(this.fullUrl, this.httpOptions);
+    return this.http.get<Skill[]>(this.fullUrl, this.getHeaders());
   }
 
   getSkill(id: number): Observable<Skill> {
-    return this.http.get<Skill>(`${this.fullUrl}/${id}`, this.httpOptions);
+    return this.http.get<Skill>(`${this.fullUrl}/${id}`, this.getHeaders());
   }
 
 
   createSkill(skill: Skill) {
-    console.log(this.httpOptions);
-    return this.http.post<Skill>(this.fullUrl, JSON.stringify(skill), this.httpOptions);
+    return this.http.post<Skill>(this.fullUrl, JSON.stringify(skill), this.getHeaders());
   }
 
   updateSkill(skill: Skill) {
-    return this.http.put(this.fullUrl, skill, this.httpOptions);
+    return this.http.put(this.fullUrl, skill, this.getHeaders());
   }
 
   deleteSkill(skill: Skill) {

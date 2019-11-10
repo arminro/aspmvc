@@ -12,42 +12,39 @@ import { tap } from 'rxjs/operators';
 })
 export class JobsService {
 
+  apiRoot = 'https://localhost:44375';
+  apiUrl = '/api/jobs';
+  private fullUrl: string;
+
+  getHeaders() {
+    return {
+      headers: new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization',  `Bearer ${this.authSrv.getBearer()}`)
+    };
+  }
   // adding header
   // this part only works due to the authetication guard (auth is earlier than any call here)
- httpOptions = {
-  headers: new HttpHeaders()
-  .set('Content-Type', 'application/json')
-  .set('Authorization',  `Bearer ${this.authSrv.getBearer()}`)
-};
-
-
-
-apiRoot = 'https://localhost:44375';
-apiUrl = '/api/jobs';
-
-
-  private fullUrl: string;
 
   constructor(private readonly http: HttpClient, private readonly authSrv: AuthService) {
       this.fullUrl = `${this.apiRoot}${this.apiUrl}`;
    }
 
   getJobs(): Observable<Job[]> {
-    return this.http.get<Job[]>(this.fullUrl, this.httpOptions);
+    return this.http.get<Job[]>(this.fullUrl, this.getHeaders());
   }
 
   getJob(id: number): Observable<Job> {
-    return this.http.get<Job>(`${this.fullUrl}/${id}`, this.httpOptions);
+    return this.http.get<Job>(`${this.fullUrl}/${id}`, this.getHeaders());
   }
 
 
   createJob(job: Job) {
-    console.log(this.httpOptions);
-    return this.http.post<Job>(this.fullUrl, JSON.stringify(job), this.httpOptions);
+    return this.http.post<Job>(this.fullUrl, JSON.stringify(job), this.getHeaders());
   }
 
   updateJob(job: Job) {
-    return this.http.put(this.fullUrl, job, this.httpOptions);
+    return this.http.put(this.fullUrl, job, this.getHeaders());
   }
 
   deleteJob(job: Job) {
@@ -56,8 +53,10 @@ apiUrl = '/api/jobs';
       headers: new HttpHeaders({
         'Content-Type': 'application/json', Authorization: `Bearer ${this.authSrv.getBearer()}`
       }),
-      body: `${JSON.stringify(job.userId)}`,
+      body: `\"${job.userId.toString()}\"`,
     };
     return this.http.delete<Job>(`${this.fullUrl}/${job.id}`,  deleteOptions);
   }
+
+
 }
