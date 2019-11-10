@@ -11,3 +11,4 @@ Room for improvement: issues aside, there are some features I would like to inte
 - better-structured angular project, integrating modules
 - integrate generics into angular project
 - use store instead of local storage, solve problem of invalid tokens over extrended use
+- move all configuration to config files on both server and client
