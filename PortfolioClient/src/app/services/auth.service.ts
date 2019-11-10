@@ -33,7 +33,7 @@ export class AuthService {
   constructor(private readonly http: HttpClient) {
     this.fullUrl = `${this.apiRoot}${this.apiUrl}`;
     // default value is null for an authenticated user
-    this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('user')));
+    this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(sessionStorage.getItem('user')));
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
@@ -50,7 +50,7 @@ export class AuthService {
         .pipe(
           tap((resp) => {
             if (resp && resp.token) {
-              localStorage.setItem('user', JSON.stringify(resp));
+              sessionStorage.setItem('user', JSON.stringify(resp));
               this.currentUserSubject.next(resp); }
             }));
 }
@@ -61,7 +61,7 @@ register(candidate: Register) {
         .pipe(
           tap((resp) => {
             if (resp && resp.token) {
-              localStorage.setItem('user', JSON.stringify(resp));
+              sessionStorage.setItem('user', JSON.stringify(resp));
               this.currentUserSubject.next(resp);
             }}));
 }
@@ -76,7 +76,7 @@ logout() {
   return this.http.post<any>(`${this.fullUrl}/logout`, null, httpLogoutOptions)
   .pipe(
   tap(() => {
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
     this.currentUserSubject.next(null);
   }));
 }
