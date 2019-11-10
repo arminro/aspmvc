@@ -127,7 +127,7 @@ namespace PortfolioWeb.Controllers
 
         // DELETE api/[entities]/5555-5555-5555
         [HttpDelete("{id}")]
-        public virtual async Task<ActionResult> Delete(Guid id, [FromHeader] Guid ownerId)
+        public virtual async Task<ActionResult> Delete(Guid id, [FromBody] Guid ownerId)
         {
             try
             {
