@@ -24,7 +24,7 @@
     "angular-jwt": "^0.1.11",
     "bootstrap": "^4.0.0-beta",
     "font-awesome": "^4.7.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jwt-decode": "^2.2.0",
     "ngx-bootstrap": "^5.2.0",
     "ngx-toastr": "^11.2.0",
